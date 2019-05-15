@@ -17,15 +17,15 @@ if the authors have been advised of the possibility of such
 damages.
 
 If you have any questions feel free to contact us using
-alwin.zulehner@jku.at, lukas.burgholzer@jku.at or robert.wille@jku.at
+robert.wille@jku.at, lukas.burgholzer@jku.at, alwin.zulehner@jku.at
 
 ## Overview
 
 The recent progress in the physical realization of quantum computers (the first publicly available ones—IBM’s QX architectures—have been launched in 2017) has motivated research on automatic methods that aid users in running quantum circuits on them. Here, certain physical constraints given by the architectures which restrict the allowed interactions of the involved qubits have to be satisfied.
  
- Thus far, this has been addressed by inserting SWAP and H operations. However, it remains unknown whether existing methods add a minimum number of SWAP and H operations or, if not, how far they are away from that minimum—an NP-complete problem. 
+Thus far, this has been addressed by inserting SWAP and H operations. However, it remains unknown whether existing methods add a minimum number of SWAP and H operations or, if not, how far they are away from that minimum—an NP-complete problem. 
  
- Here, we address this by formulating the mapping task as a symbolic optimization problem that is solved using the Z3 theorem solver. While only applicable for circuits with a small number of qubits, experimental evaluations show that the number of operations added by IBM’s heuristic solution exceeds the lower bound obtained with the proposed approach by more than 100% on average.
+This tool addresses this by formulating the mapping task as a symbolic optimization problem that is solved using the Z3 theorem solver. While only applicable for circuits with a small number of qubits, experimental evaluations show that the number of operations added by IBM’s heuristic solution exceeds the lower bound obtained with the proposed approach by more than 100% on average.
 
 ## Usage
 
