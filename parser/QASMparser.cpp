@@ -99,19 +99,15 @@ QASMparser::Expr* QASMparser::QASMexponentiation() {
 	if(sym == Token::Kind::real) {
 		scan();
 		return new Expr(Expr::Kind::number, nullptr, nullptr, t.valReal, "");
-		//return mpreal(t.val_real);
 	} else if(sym == Token::Kind::nninteger) {
 		scan();
 		return new Expr(Expr::Kind::number, nullptr, nullptr, t.val, "");
-		//return mpreal(t.val);
 	} else if(sym == Token::Kind::pi) {
 		scan();
 		return new Expr(Expr::Kind::number, nullptr, nullptr, PI, "");
-		//return mpfr::const_pi();
 	} else if(sym == Token::Kind::identifier) {
 		scan();
 		return new Expr(Expr::Kind::id, nullptr, nullptr, 0, t.str);
-		//return it->second;
 	} else if(sym == Token::Kind::lpar) {
 		scan();
 		x = QASMexp();

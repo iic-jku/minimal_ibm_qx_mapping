@@ -91,7 +91,7 @@ void QASMscanner::nextCh() {
 }
 
 Token QASMscanner::next() {
-	while(isspace(ch)) {
+	while(std::isspace(ch)) {
 		nextCh();
     }
 
@@ -193,7 +193,7 @@ Token QASMscanner::next() {
         					}
         					break;
         default:
-            std::cerr << "ERROR: UNEXPECTED CHARACTER: '" << ch << "'! " << std::endl;
+            std::cerr << "ERROR: UNEXPECTED CHARACTER: '" << ch << "'! at line: " << line << ", col: " << col << std::endl;
             nextCh();
         }
 
