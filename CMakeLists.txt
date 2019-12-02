@@ -24,10 +24,14 @@ project(minimal_mapping)
 
 add_executable(minimal_mapping
                minimal_ibm_qx_mapping/Circuit.cpp
+               minimal_ibm_qx_mapping/Circuit.hpp
                minimal_ibm_qx_mapping/main.cpp
                parser/QASMparser.cpp
                parser/QASMscanner.cpp
-               parser/QASMtoken.cpp)
+               parser/QASMtoken.cpp
+               parser/QASMparser.h
+               parser/QASMscanner.hpp
+               parser/QASMtoken.hpp)
 
 set_property(TARGET minimal_mapping PROPERTY CXX_STANDARD 11)
 set_property(TARGET minimal_mapping PROPERTY CXX_EXTENSIONS OFF)

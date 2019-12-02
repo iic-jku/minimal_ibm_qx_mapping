@@ -28,6 +28,7 @@ by citing the following publication:
 #include <cmath>
 #include <string>
 #include <iostream>
+#include <fstream>
 
 #include <QASMscanner.hpp>
 #include <QASMtoken.hpp>
