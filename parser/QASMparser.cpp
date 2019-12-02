@@ -20,9 +20,8 @@ by citing the following publication:
 */
 
 #include <QASMparser.h>
-#include <algorithm>
 
-QASMparser::QASMparser(std::string filename) {
+QASMparser::QASMparser(const std::string& filename) {
 	in = new std::ifstream (filename, std::ifstream::in);
 	this->scanner = new QASMscanner(*this->in);
 	this->fname = filename;
@@ -34,9 +33,9 @@ QASMparser::~QASMparser() {
 	delete in;
     delete[] last_layer;
 
-	for(auto it = compoundGates.begin(); it != compoundGates.end(); it++) {
-		for(auto it2 = it->second.gates.begin(); it2 != it->second.gates.end(); it2++) {
-			delete *it2;
+	for(auto & compoundGate : compoundGates) {
+		for(auto & gate : compoundGate.second.gates) {
+			delete gate;
 		}
 	}
 }
@@ -99,19 +98,19 @@ QASMparser::Expr* QASMparser::QASMexponentiation() {
 
 	if(sym == Token::Kind::real) {
 		scan();
-		return new Expr(Expr::Kind::number, NULL, NULL, t.valReal, "");
+		return new Expr(Expr::Kind::number, nullptr, nullptr, t.valReal, "");
 		//return mpreal(t.val_real);
 	} else if(sym == Token::Kind::nninteger) {
 		scan();
-		return new Expr(Expr::Kind::number, NULL, NULL, t.val, "");
+		return new Expr(Expr::Kind::number, nullptr, nullptr, t.val, "");
 		//return mpreal(t.val);
 	} else if(sym == Token::Kind::pi) {
 		scan();
-		return new Expr(Expr::Kind::number, NULL, NULL, mpfr::const_pi(), "");
+		return new Expr(Expr::Kind::number, nullptr, nullptr, PI, "");
 		//return mpfr::const_pi();
 	} else if(sym == Token::Kind::identifier) {
 		scan();
-		return new Expr(Expr::Kind::id, NULL, NULL, 0, t.str);
+		return new Expr(Expr::Kind::id, nullptr, nullptr, 0, t.str);
 		//return it->second;
 	} else if(sym == Token::Kind::lpar) {
 		scan();
@@ -126,38 +125,38 @@ QASMparser::Expr* QASMparser::QASMexponentiation() {
 		check(Token::Kind::rpar);
 		if(x->kind == Expr::Kind::number) {
 			if(op == Token::Kind::sin) {
-				x->num = sin(x->num);
+				x->num = std::sin(x->num);
 			} else if(op == Token::Kind::cos) {
-				x->num = cos(x->num);
+				x->num = std::cos(x->num);
 			} else if(op == Token::Kind::tan) {
-				x->num = tan(x->num);
+				x->num = std::tan(x->num);
 			} else if(op == Token::Kind::exp) {
-				x->num = exp(x->num);
+				x->num = std::exp(x->num);
 			} else if(op == Token::Kind::ln) {
-				x->num = log(x->num);
+				x->num = std::log(x->num);
 			} else if(op == Token::Kind::sqrt) {
-				x->num = sqrt(x->num);
+				x->num = std::sqrt(x->num);
 			}
 			return x;
 		} else {
 			if(op == Token::Kind::sin) {
-				return new Expr(Expr::Kind::sin, x, NULL, 0, "");
+				return new Expr(Expr::Kind::sin, x, nullptr, 0, "");
 			} else if(op == Token::Kind::cos) {
-				return new Expr(Expr::Kind::cos, x, NULL, 0, "");
+				return new Expr(Expr::Kind::cos, x, nullptr, 0, "");
 			} else if(op == Token::Kind::tan) {
-				return new Expr(Expr::Kind::tan, x, NULL, 0, "");
+				return new Expr(Expr::Kind::tan, x, nullptr, 0, "");
 			} else if(op == Token::Kind::exp) {
-				return new Expr(Expr::Kind::exp, x, NULL, 0, "");
+				return new Expr(Expr::Kind::exp, x, nullptr, 0, "");
 			} else if(op == Token::Kind::ln) {
-				return new Expr(Expr::Kind::ln, x, NULL, 0, "");
+				return new Expr(Expr::Kind::ln, x, nullptr, 0, "");
 			} else if(op == Token::Kind::sqrt) {
-				return new Expr(Expr::Kind::sqrt, x, NULL, 0, "");
+				return new Expr(Expr::Kind::sqrt, x, nullptr, 0, "");
 			}
 		}
 	} else {
 		std::cerr << "Invalid Expression" << std::endl;
 	}
-	return NULL;
+	return nullptr;
 }
 
 QASMparser::Expr* QASMparser::QASMfactor() {
@@ -168,7 +167,7 @@ QASMparser::Expr* QASMparser::QASMfactor() {
 		scan();
 		y = QASMexponentiation();
 		if(x->kind == Expr::Kind::number && y->kind == Expr::Kind::number) {
-			x->num = pow(x->num, y->num);
+			x->num = std::pow(x->num, y->num);
 			delete y;
 		} else {
 			x = new Expr(Expr::Kind::power, x, y, 0, "");
@@ -214,7 +213,7 @@ QASMparser::Expr* QASMparser::QASMexp() {
 		if(x->kind == Expr::Kind::number) {
 			x->num = -x->num;
 		} else {
-			x = new Expr(Expr::Kind::sign, x, NULL, 0, "");
+			x = new Expr(Expr::Kind::sign, x, nullptr, 0, "");
 		}
 	} else {
 		x = QASMterm();
@@ -260,19 +259,18 @@ void QASMparser::QASMargsList(std::vector<std::pair<int, int> >& arguments) {
 	}
 }
 
-void QASMparser::addUgate(int target, mpfr::mpreal theta, mpfr::mpreal phi, mpfr::mpreal lambda) {
+void QASMparser::addUgate(int target, const fp& theta, const fp& phi, const fp& lambda) {
     gate g;
-    unsigned int layer;
 
     g.target = target;
     g.control = -1;
-    snprintf ( g.type, 127, "U(%f, %f, %f)", theta.toDouble(), phi.toDouble(), lambda.toDouble());
+    snprintf ( g.type, 127, "U(%f, %f, %f)", theta, phi, lambda);
 
-    layer = last_layer[g.target] + 1;
+    int layer = last_layer[g.target] + 1;
     last_layer[g.target] = layer;
 
     if (layers.size() <= layer) {
-        layers.push_back(std::vector<gate>());
+        layers.emplace_back();
     }
     layers[layer].push_back(g);
     ngates++;
@@ -280,17 +278,16 @@ void QASMparser::addUgate(int target, mpfr::mpreal theta, mpfr::mpreal phi, mpfr
 
 void QASMparser::addCXgate(int target, int control) {
     gate g;
-    unsigned int layer;
 
     g.target = target;
     g.control = control;
     snprintf ( g.type, 127, "CX");
 
-    layer = std::max(last_layer[g.target], last_layer[g.control]) + 1;
+	int layer = std::max(last_layer[g.target], last_layer[g.control]) + 1;
     last_layer[g.target] = last_layer[g.control] = layer;
 
     if (layers.size() <= layer) {
-        layers.push_back(std::vector<gate>());
+        layers.emplace_back();
     }
 
     layers[layer].push_back(g);
@@ -373,22 +370,22 @@ void QASMparser::QASMgate(bool execute) {
 				std::map<std::string, Expr*> paramsMap;
 				int size = 1;
 				int i = 0;
-				for(auto it = arguments.begin(); it != arguments.end(); it++) {
-					argsMap[gateIt->second.argumentNames[i]] = *it;
+				for(auto & argument : arguments) {
+					argsMap[gateIt->second.argumentNames[i]] = argument;
 					i++;
-					if(it->second > 1 && size != 1 && it->second != size) {
+					if(argument.second > 1 && size != 1 && argument.second != size) {
 						std::cerr << "Register sizes do not match!" << std::endl;
 					}
-					if(it->second > 1) {
-						size = it->second;
+					if(argument.second > 1) {
+						size = argument.second;
 					}
 				}
 				for(unsigned int i = 0; i < parameters.size(); i++) {
 					paramsMap[gateIt->second.parameterNames[i]] = parameters[i];
 				}
 
-				for(auto it = gateIt->second.gates.begin(); it != gateIt->second.gates.end(); it++) {
-					if(Ugate* u = dynamic_cast<Ugate*>(*it)) {
+				for(auto & gate : gateIt->second.gates) {
+					if(auto u = dynamic_cast<Ugate*>(gate)) {
 						Expr* theta = RewriteExpr(u->theta, paramsMap);
 						Expr* phi = RewriteExpr(u->phi, paramsMap);
 						Expr* lambda = RewriteExpr(u->lambda, paramsMap);
@@ -399,7 +396,7 @@ void QASMparser::QASMgate(bool execute) {
 						delete theta;
 						delete phi;
 						delete lambda;
-					} else if(CXgate* cx = dynamic_cast<CXgate*>(*it)) {
+					} else if(auto cx = dynamic_cast<CXgate*>(gate)) {
 						if(argsMap[cx->control].second == argsMap[cx->target].second) {
 							for(int i = 0; i < argsMap[cx->target].second; i++) {
                                 addCXgate(argsMap[cx->target].first+i, argsMap[cx->control].first+i);
@@ -440,8 +437,8 @@ void QASMparser::QASMidList(std::vector<std::string>& identifiers) {
 }
 
 QASMparser::Expr* QASMparser::RewriteExpr(Expr* expr, std::map<std::string, Expr*>& exprMap) {
-	if(expr == NULL) {
-		return NULL;
+	if(expr == nullptr) {
+		return nullptr;
 	}
 	Expr* op1 = RewriteExpr(expr->op1, exprMap);
 	Expr* op2 = RewriteExpr(expr->op2, exprMap);
@@ -609,18 +606,18 @@ void QASMparser::QASMgateDecl() {
 				paramsMap[g.parameterNames[i]] = parameters[i];
 			}
 
-			for(auto it = g.gates.begin(); it != g.gates.end(); it++) {
-				if(Ugate* u = dynamic_cast<Ugate*>(*it)) {
+			for(auto & it : g.gates) {
+				if(auto u = dynamic_cast<Ugate*>(it)) {
 					gate.gates.push_back(new Ugate(RewriteExpr(u->theta, paramsMap), RewriteExpr(u->phi, paramsMap), RewriteExpr(u->lambda, paramsMap), argsMap[u->target]));
-				} else if(CXgate* cx = dynamic_cast<CXgate*>(*it)) {
+				} else if(auto cx = dynamic_cast<CXgate*>(it)) {
 					gate.gates.push_back(new CXgate(argsMap[cx->control], argsMap[cx->target]));
 				} else {
 					std::cerr << "Unexpected gate!" << std::endl;
 				}
 			}
 
-			for(auto it = parameters.begin(); it != parameters.end(); it++) {
-				delete *it;
+			for(auto & parameter : parameters) {
+				delete parameter;
 			}
 		} else if(sym == Token::Kind::barrier) {
 			scan();
@@ -815,8 +812,8 @@ void QASMparser::Parse() {
 		} else if(sym == Token::Kind::include) {
 			scan();
 			check(Token::Kind::string);
-			std::string fname = t.str;
-			scanner->addFileInput(fname);
+			std::string fn = t.str;
+			scanner->addFileInput(fn);
 			check(Token::Kind::semicolon);
 		} else if(sym == Token::Kind::barrier) {
 			scan();

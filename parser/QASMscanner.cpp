@@ -19,14 +19,6 @@ by citing the following publication:
 }
 */
 
-#include <iostream>
-#include <fstream>
-#include <istream>
-#include <map>
-#include <wctype.h>
-#include <ctype.h>
-#include <sstream>
-
 #include <QASMscanner.hpp>
 
 QASMscanner::QASMscanner(std::istream& in_stream) : in(in_stream) {
@@ -58,12 +50,12 @@ QASMscanner::QASMscanner(std::istream& in_stream) : in(in_stream) {
         nextCh();
 }
 
-void QASMscanner::addFileInput(std::string fname) {
-	std::ifstream* in = new std::ifstream (fname, std::ifstream::in);
-	if(in->fail()) {
+void QASMscanner::addFileInput(const std::string& fname) {
+	auto ifs = new std::ifstream (fname, std::ifstream::in);
+	if(ifs->fail()) {
 		std::cerr << "Failed to open file '" << fname << "'!" << std::endl;
 	} else {
-		streams.push(in);
+		streams.push(ifs);
 		lines.push(LineInfo(ch, line, col));
 		line = 0;
 		col = 0;
@@ -99,7 +91,7 @@ void QASMscanner::nextCh() {
 }
 
 Token QASMscanner::next() {
-	while(iswspace(ch)) {
+	while(isspace(ch)) {
 		nextCh();
     }
 
@@ -231,7 +223,7 @@ void QASMscanner::readName(Token& t) {
             nextCh();
         }
         t.str = ss.str();
-        std::map<std::string, Token::Kind>::iterator it = keywords.find(t.str);
+        auto it = keywords.find(t.str);
         if(it != keywords.end()) {
             t.kind = it->second;
         } else {

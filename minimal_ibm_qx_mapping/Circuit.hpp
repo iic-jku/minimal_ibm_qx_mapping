@@ -27,9 +27,10 @@ by citing the following publication:
 #include <algorithm>
 #include <utility>
 #include <functional>
-#include <z3++.h>
-#include "QASMparser.h"
 #include <chrono>
+#include <z3++.h>
+
+#include "QASMparser.h"
 
 using namespace std::chrono;
 using namespace z3;
@@ -349,7 +350,7 @@ struct Circuit {
     /// Computes n! recursively
     /// \param n interger to compute factorial of
     /// \return n!
-	inline
+	static inline
     unsigned long factorial(unsigned long n) {
         if (n == 1)
             return 1;

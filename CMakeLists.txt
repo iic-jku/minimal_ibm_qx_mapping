@@ -20,23 +20,19 @@ year={2019}
 ]]
 
 cmake_minimum_required(VERSION 3.12)
-project(minimal_ibm_qx_mapping)
+project(minimal_mapping)
 
-set(CMAKE_CXX_STANDARD 14)
-
-include_directories(minimal_ibm_qx_mapping parser)
-
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3")
-
-INCLUDE_DIRECTORIES(/usr/local/include ${PROJECT_SOURCE_DIR}/mpfrc++-3.6.2)
-LINK_DIRECTORIES(/usr/local/lib)
-
-add_executable(minimal_ibm_qx_mapping
+add_executable(minimal_mapping
                minimal_ibm_qx_mapping/Circuit.cpp
-               minimal_ibm_qx_mapping/Circuit.hpp
                minimal_ibm_qx_mapping/main.cpp
                parser/QASMparser.cpp
                parser/QASMscanner.cpp
                parser/QASMtoken.cpp)
 
-target_link_libraries(minimal_ibm_qx_mapping z3 mpfr)
+set_property(TARGET minimal_mapping PROPERTY CXX_STANDARD 11)
+set_property(TARGET minimal_mapping PROPERTY CXX_EXTENSIONS OFF)
+target_compile_options(minimal_mapping PRIVATE -DNDEBUG -g -mtune=native -march=native -pipe -flto)
+
+target_include_directories(minimal_mapping PUBLIC /usr/local/include minimal_ibm_qx_mapping parser)
+target_link_directories(minimal_mapping PUBLIC /usr/local/lib)
+target_link_libraries(minimal_mapping z3)

@@ -22,16 +22,23 @@ by citing the following publication:
 #ifndef QASM_SIMULATOR_H_
 #define QASM_SIMULATOR_H_
 
-#include <QASMscanner.hpp>
-#include <QASMtoken.hpp>
 #include <vector>
 #include <set>
-#include <gmp.h>
-#include <mpreal.h>
+#include <algorithm>
+#include <cmath>
+#include <string>
+#include <iostream>
+
+#include <QASMscanner.hpp>
+#include <QASMtoken.hpp>
+
+using fp = double;
+
+static constexpr fp PI = 3.141592653589793238462643383279502884197169399375105820974L;
 
 class QASMparser {
 public:
-	QASMparser(std::string fname);
+	explicit QASMparser(const std::string& fname);
 	virtual ~QASMparser();
 
 	void Parse();
@@ -46,11 +53,11 @@ public:
         return layers;
     }
 
-    int getNqubits() {
+    unsigned int getNqubits() {
         return nqubits;
     }
 
-    int getNgates() {
+    unsigned int getNgates() {
         return ngates;
     }
 
@@ -58,13 +65,13 @@ private:
 	class Expr {
 	public:
 		enum class Kind {number, plus, minus, sign, times, sin, cos, tan, exp, ln, sqrt, div, power, id};
-		mpfr::mpreal num;
+		fp num;
 		Kind kind;
-		Expr* op1 = NULL;
-		Expr* op2 = NULL;
+		Expr* op1 = nullptr;
+		Expr* op2 = nullptr;
 		std::string id;
 
-		Expr(Kind kind,  Expr* op1, Expr* op2, mpfr::mpreal num, std::string id) {
+		Expr(Kind kind,  Expr* op1, Expr* op2, const fp& num, const std::string& id) {
 			this->kind = kind;
 			this->op1 = op1;
 			this->op2 = op2;
@@ -76,21 +83,17 @@ private:
 			this->kind = expr.kind;
 			this->num = expr.num;
 			this->id = expr.id;
-			if(expr.op1 != NULL) {
+			if(expr.op1 != nullptr) {
 				this->op1 = new Expr(*expr.op1);
 			}
-			if(expr.op2 != NULL) {
+			if(expr.op2 != nullptr) {
 				this->op2 = new Expr(*expr.op2);
 			}
 		}
 
 		~Expr() {
-			if(op1 != NULL) {
-				delete op1;
-			}
-			if(op2 != NULL) {
-				delete op2;
-			}
+			delete op1;
+			delete op2;
 		}
 	};
 
@@ -106,23 +109,18 @@ private:
 		Expr* lambda;
 		std::string target;
 
-		Ugate(Expr* theta, Expr* phi, Expr* lambda, std::string target) {
+		Ugate(Expr* theta, Expr* phi, Expr* lambda, const std::string& target) {
 			this->theta = theta;
 			this->phi = phi;
 			this->lambda = lambda;
 			this->target = target;
 		}
 
-		~Ugate() {
-			if(theta != NULL) {
-				delete theta;
-			}
-			if(phi != NULL) {
-				delete phi;
-			}
-			if(lambda != NULL) {
-				delete lambda;
-			}
+		~Ugate() override {
+			delete theta;
+			delete phi;
+			delete lambda;
+
 		}
 	};
 
@@ -131,7 +129,7 @@ private:
 		std::string control;
 		std::string target;
 
-		CXgate(std::string control, std::string target) {
+		CXgate(const std::string& control, const std::string& target) {
 			this->control = control;
 			this->target = target;
 		}
@@ -148,12 +146,8 @@ private:
 	class Snapshot {
 	public:
 		~Snapshot() {
-			if(probabilities != NULL) {
-				delete[] probabilities;
-			}
-			if(statevector != NULL) {
-				delete[] statevector;
-			}
+			delete[] probabilities;
+			delete[] statevector;
 		}
 
 		unsigned long long len;
@@ -189,8 +183,8 @@ private:
 	std::set<Token::Kind> unaryops {Token::Kind::sin,Token::Kind::cos,Token::Kind::tan,Token::Kind::exp,Token::Kind::ln,Token::Kind::sqrt};
 
 	std::map<std::string, CompoundGate> compoundGates;
-	Expr* RewriteExpr(Expr* expr, std::map<std::string, Expr*>& exprMap);
-	void printExpr(Expr* expr);
+	static Expr* RewriteExpr(Expr* expr, std::map<std::string, Expr*>& exprMap);
+	static void printExpr(Expr* expr);
 
 	std::vector<std::vector<gate> > layers;
 
@@ -198,7 +192,7 @@ private:
     int* last_layer;
     unsigned int ngates = 0;
 
-    void addUgate(int target, mpfr::mpreal theta, mpfr::mpreal phi, mpfr::mpreal lambda);
+    void addUgate(int target, const fp& theta, const fp& phi, const fp& lambda);
     void addCXgate(int target, int control);
 };
 

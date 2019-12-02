@@ -23,23 +23,22 @@ by citing the following publication:
 #define QASMSCANNER_HPP_
 
 #include <iostream>
-#include <fstream>     
-#include <istream>
+#include <fstream>
 #include <map>
-#include <wctype.h>
-#include <ctype.h>
-#include <QASMtoken.hpp>
+#include <cctype>
 #include <sstream>
 #include <stack>
+#include <string>
 
+#include <QASMtoken.hpp>
 
 class QASMscanner {
 
 
 public:
-    QASMscanner(std::istream& in_stream);
+    explicit QASMscanner(std::istream& in_stream);
     Token next();
-    void addFileInput(std::string fname);
+    void addFileInput(const std::string& fname);
 
 private:
   	std::istream& in;

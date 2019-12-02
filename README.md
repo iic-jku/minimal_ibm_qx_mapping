@@ -34,8 +34,6 @@ This tool addresses this by formulating the mapping task as a symbolic optimizat
 The package has been tested under Linux (Ubuntu 18.10, 64-bit) and should be compatible with any current version of g++/cmake.
 Additionally the following packages are required:
 * The Z3 Theorem Solver: https://github.com/Z3Prover/z3
-* MPFR: https://www.mpfr.org
-* MPFRC++ Header: included with this package
 * qelib.inc Gate Library: included with this package
   
 ### Build and Run 

@@ -18,7 +18,9 @@ by citing the following publication:
     year={2019}
 }
 */
-
+#include <vector>
+#include <iostream>
+#include <sstream>
 #include "Circuit.hpp"
 
 /// Cost of permutations on IBM QX2/QX4 architecture.
@@ -82,7 +84,7 @@ const CouplingMap ibmQX4 = {
 		{ 2, 1 },
 		{ 3, 2 },
 		{ 3, 4 },
-		{ 4, 2 }
+		{ 2, 4 }
 };
 
 int main(int argc, const char * argv[]) {
