@@ -26,6 +26,7 @@ by citing the following publication:
 #include <fstream>
 #include <map>
 #include <cctype>
+#include <cwctype>
 #include <sstream>
 #include <stack>
 #include <string>
