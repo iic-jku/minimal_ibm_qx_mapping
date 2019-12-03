@@ -23,7 +23,11 @@ by citing the following publication:
 
 QASMparser::QASMparser(const std::string& filename) {
 	in = new std::ifstream (filename, std::ifstream::in);
-	this->scanner = new QASMscanner(*this->in);
+	if (in->fail()) {
+		std::cerr << "Failed to open file '" << filename << "'!" << std::endl;
+		exit(1);
+	}
+	this->scanner = new QASMscanner(*in);
 	this->fname = filename;
 	last_layer = new int[1];
 }

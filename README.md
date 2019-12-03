@@ -43,17 +43,27 @@ To build the mapping tool type
     mkdir build
     cd build 
     cmake ..
-    make
+    make -j4
     cd ..
     
 It is important to include the `qelib1.inc` file in the build directory in order to allow the parser to find the gate declarations.
 
-Executing ``./build/minimal_ibm_qx_mapping`` runs the mapping task for the provided test circuit
+    cp ./qelib.inc ./build/
+
+Executing 
+
+    ./build/minimal_ibm_qx_mapping
+     
+ runs the mapping task for the provided test circuit
 mapped to IBM's QX4; showing the results for all available strategies. 
 
-To run your own computations for mapping to IBM's QX4, either execute ``/build/minimal_ibm_qx_mapping <input file>`` or specify the filename in ``main.cpp``.
+To run your own computations for mapping to IBM's QX4, either execute 
 
-The strategy to use can be configured in ``main.cpp``
+    ./build/minimal_ibm_qx_mapping <input file>
+
+ or specify the filename in ``main.cpp``.
+
+The strategy to use can be configured in ``main.cpp``.
 
 To run the mapping task for a different architecture, specify the architectures' coupling map, as well as the correspondingly required number of SWAP gates for each permutation in ``main.cpp``.
 
