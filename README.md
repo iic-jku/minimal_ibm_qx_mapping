@@ -1,23 +1,9 @@
 ## A tool to map quantum circuits to the IBM QX architecture using the minimal number of SWAP and H operations (developed in C++)
-Copyright (c) 2019
-by Robert Wille (robert.wille@jku.at), Lukas Burgholzer (lukas.burgholzer@jku.at) and Alwin Zulehner (alwin.zulehner@jku.at)
-Johannes Kepler University Linz, Austria
-http://iic.jku.at/eda/research/ibm_qx_mapping/
+Developers: Robert Wille, Lukas Burgholzer and Alwin Zulehner
 
-The software is intellectual property of the above mentioned authors. You 
-can freely redistribute this software for non-commercial purposes as long as 
-it includes a reference to its origin.
+For more information, please visit http://iic.jku.at/eda/research/ibm_qx_mapping/
 
-Use at your own risk!
-In no event shall the authors be liable for any 
-damages whatsoever (including without limitation damages for loss of business 
-profits, business interruption, loss of business information, or any other 
-pecuniary loss) arising from the use of or inability to use the software, even 
-if the authors have been advised of the possibility of such 
-damages.
-
-If you have any questions feel free to contact us using
-robert.wille@jku.at, lukas.burgholzer@jku.at, alwin.zulehner@jku.at
+If you have any questions, feel free to contact us via iic_quantum@jku.at or by creating an issue on GitHub.
 
 ## Overview
 
