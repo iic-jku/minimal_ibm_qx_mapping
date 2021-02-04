@@ -1,3 +1,6 @@
+---
+A new - more modern and flexible - implementation of this exact mapping methodology is available in our [JKQ quantum circuit mapping tool QMAP](https://github.com/iic-jku/qmap).
+---
 ## A tool to map quantum circuits to the IBM QX architecture using the minimal number of SWAP and H operations (developed in C++)
 Developers: Robert Wille, Lukas Burgholzer and Alwin Zulehner
 
